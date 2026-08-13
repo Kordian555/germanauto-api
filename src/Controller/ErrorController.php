@@ -22,7 +22,7 @@ class ErrorController extends AbstractController
             $this->logger->error($exception->getMessage());
         }
 
-        return new JsonResponse(['error' => $exception->getMessage()]);
+        return new JsonResponse(['error' => $exception->getMessage(), 'code' => $exception->getStatusCode()]);
     }
 
     public function error404(): Response
