@@ -43,6 +43,7 @@ class CarAdminController extends AbstractController
             ->setName($c['name'])
             ->setScore($c['score'] ?? [])
             ->setIndexStatus(0)
+            ->setActive(1)
         ;
         $em->persist($cb);
         $em->flush();
