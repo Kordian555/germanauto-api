@@ -100,7 +100,7 @@ class CarAdminController extends AbstractController
             throw new BadRequestException('Data missing');
         }
 
-        $existing = $em->getRepository(CarGeneration::class)->findOneBy(['name' => $c['name']]);
+        $existing = $em->getRepository(CarGeneration::class)->findOneBy(['name' => $c['name'], 'carmodel' => $model]);
         if ($existing) {
             throw new AlreadyExistsException('Generation already exists');
         }
