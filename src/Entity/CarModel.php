@@ -31,9 +31,16 @@ class CarModel
     #[ORM\OneToMany(targetEntity: CarGeneration::class, mappedBy: 'carmodel')]
     private Collection $carGenerations;
 
+    /**
+     * @var Collection<int, ListingCar>
+     */
+    #[ORM\OneToMany(targetEntity: ListingCar::class, mappedBy: 'car_model')]
+    private Collection $listingCars;
+
     public function __construct()
     {
         $this->carGenerations = new ArrayCollection();
+        $this->listingCars = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -89,6 +96,36 @@ class CarModel
             // set the owning side to null (unless already changed)
             if ($carGeneration->getCarmodel() === $this) {
                 $carGeneration->setCarmodel(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ListingCar>
+     */
+    public function getListingCars(): Collection
+    {
+        return $this->listingCars;
+    }
+
+    public function addListingCar(ListingCar $listingCar): static
+    {
+        if (!$this->listingCars->contains($listingCar)) {
+            $this->listingCars->add($listingCar);
+            $listingCar->setCarModel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeListingCar(ListingCar $listingCar): static
+    {
+        if ($this->listingCars->removeElement($listingCar)) {
+            // set the owning side to null (unless already changed)
+            if ($listingCar->getCarModel() === $this) {
+                $listingCar->setCarModel(null);
             }
         }
 

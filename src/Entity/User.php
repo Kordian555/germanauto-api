@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -34,6 +36,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Groups(['admin', 'user'])]
     private array $roles = [];
+
+    /**
+     * @var Collection<int, Listing>
+     */
+    #[ORM\OneToMany(targetEntity: Listing::class, mappedBy: 'user')]
+    private Collection $listings;
+
+    public function __construct()
+    {
+        $this->listings = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -84,5 +97,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
 
+    }
+
+    /**
+     * @return Collection<int, Listing>
+     */
+    public function getListings(): Collection
+    {
+        return $this->listings;
+    }
+
+    public function addListing(Listing $listing): static
+    {
+        if (!$this->listings->contains($listing)) {
+            $this->listings->add($listing);
+            $listing->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeListing(Listing $listing): static
+    {
+        if ($this->listings->removeElement($listing)) {
+            // set the owning side to null (unless already changed)
+            if ($listing->getUser() === $this) {
+                $listing->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -40,9 +40,16 @@ class CarBrand
     #[Groups(['read'])]
     private ?bool $active = null;
 
+    /**
+     * @var Collection<int, ListingCar>
+     */
+    #[ORM\OneToMany(targetEntity: ListingCar::class, mappedBy: 'car_brand')]
+    private Collection $listingCars;
+
     public function __construct()
     {
         $this->carModels = new ArrayCollection();
+        $this->listingCars = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,6 +131,36 @@ class CarBrand
     public function setActive(bool $active): static
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ListingCar>
+     */
+    public function getListingCars(): Collection
+    {
+        return $this->listingCars;
+    }
+
+    public function addListingCar(ListingCar $listingCar): static
+    {
+        if (!$this->listingCars->contains($listingCar)) {
+            $this->listingCars->add($listingCar);
+            $listingCar->setCarBrand($this);
+        }
+
+        return $this;
+    }
+
+    public function removeListingCar(ListingCar $listingCar): static
+    {
+        if ($this->listingCars->removeElement($listingCar)) {
+            // set the owning side to null (unless already changed)
+            if ($listingCar->getCarBrand() === $this) {
+                $listingCar->setCarBrand(null);
+            }
+        }
 
         return $this;
     }

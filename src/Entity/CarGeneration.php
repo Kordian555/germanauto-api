@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CarGenerationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
@@ -30,6 +32,17 @@ class CarGeneration
     #[ORM\Column(nullable: true)]
     #[Groups(['read'])]
     private ?int $production_end = null;
+
+    /**
+     * @var Collection<int, ListingCar>
+     */
+    #[ORM\OneToMany(targetEntity: ListingCar::class, mappedBy: 'car_generation')]
+    private Collection $listingCars;
+
+    public function __construct()
+    {
+        $this->listingCars = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
@@ -81,6 +94,36 @@ class CarGeneration
     public function setProductionEnd(?int $production_end): static
     {
         $this->production_end = $production_end;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ListingCar>
+     */
+    public function getListingCars(): Collection
+    {
+        return $this->listingCars;
+    }
+
+    public function addListingCar(ListingCar $listingCar): static
+    {
+        if (!$this->listingCars->contains($listingCar)) {
+            $this->listingCars->add($listingCar);
+            $listingCar->setCarGeneration($this);
+        }
+
+        return $this;
+    }
+
+    public function removeListingCar(ListingCar $listingCar): static
+    {
+        if ($this->listingCars->removeElement($listingCar)) {
+            // set the owning side to null (unless already changed)
+            if ($listingCar->getCarGeneration() === $this) {
+                $listingCar->setCarGeneration(null);
+            }
+        }
 
         return $this;
     }
