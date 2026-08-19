@@ -58,7 +58,7 @@ class FilterService
     public function verify(
         array $filtered,
         array $classes
-    )
+    ): bool
     {
         foreach ($classes as $class => $shortName) {
             if ($class::isRequired()) {
