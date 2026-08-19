@@ -14,4 +14,8 @@ class Condition implements FilterInterface
         $reflection = new \ReflectionClass(self::class);
         return array_values($reflection->getConstants());
     }
+    public static function isRequired(): bool
+    {
+        return true;
+    }
 }

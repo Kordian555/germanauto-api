@@ -21,7 +21,7 @@ class TestCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $e =  $this->filterService->getAll();
+        $e = $this->filterService->checkFilters(['BodyType' => ['sedan'], 'Fuel' => ['diesel', 'petrol']], false);
         var_dump($e);
         return 0 ;
     }
